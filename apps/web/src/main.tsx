@@ -5,8 +5,10 @@ import '@tvk/ui/tokens.css';
 import './styles.css';
 import { App } from './App';
 import { useStore } from './state/store';
+import { isTauri } from './lib/platform';
 
-registerSW({
+// Service workers are a web/PWA concern; the Mac app ships the bundle inside the .app.
+if (!isTauri) registerSW({
   immediate: true,
   onNeedRefresh() {
     useStore.getState().pushToast({ kind: 'info', title: 'Update available', body: 'Reload to get the latest version.' });

@@ -1,0 +1,26 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Main window: native HTTP to market-data hosts and the relay, system notifications, OS info.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-set-title",
+    "notification:default",
+    "os:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        { "url": "https://api.binance.com/*" },
+        { "url": "https://api.exchange.coinbase.com/*" },
+        { "url": "https://api.kraken.com/*" },
+        { "url": "https://api.bybit.com/*" },
+        { "url": "https://www.okx.com/*" },
+        { "url": "https://*.vercel.app/*" },
+        { "url": "https://*.supabase.co/*" },
+        { "url": "http://localhost:*/*" },
+        { "url": "http://127.0.0.1:*/*" }
+      ]
+    }
+  ]
+}
