@@ -16,8 +16,9 @@ export function TopBar({ phone, theme }: { phone: boolean; theme: 'dark' | 'ligh
   const sync = useStore((s) => s.sync);
   return (
     <header className="topbar" data-testid="topbar">
-      <div className="brand" aria-label="TradingViewKraft">
+      <div className="brand">
         <span className="brand-mark" aria-hidden="true" />
+        <span className="sr-only">TradingViewKraft</span>
         {!phone && <span className="brand-name">TradingViewKraft</span>}
       </div>
       <button className="btn ghost" data-testid="open-symbol-search" onClick={() => store.openSheet('symbol', { symbolTarget: 'chart' })} title="Symbol search (/)">

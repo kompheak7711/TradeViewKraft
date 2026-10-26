@@ -32,6 +32,6 @@ export function chartPalette(): { bg: string; text: string; grid: string; border
     up: cssVar('--up', '#1fc37f'),
     down: cssVar('--down', '#f4527a'),
     crosshair: cssVar('--crosshair', '#6f7f9a'),
-    accent: cssVar('--accent', '#4f8cff'),
+    accent: cssVar('--accent', '#2f6fe6'),
   };
 }

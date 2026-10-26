@@ -1,0 +1,50 @@
+id,area,feature,tradingview_behaviour,v1_scope,status,notes
+F01,chart,Candlestick chart,Default chart type with up/down colors and wicks,must,done,Lightweight Charts candlestick series with our palette
+F02,chart,Bar chart,OHLC bars,must,done,
+F03,chart,Line chart,Close line,must,done,
+F04,chart,Area chart,Close area with gradient,must,done,
+F05,chart,Heikin Ashi,Smoothed candles,must,done,Computed in @tvk/market-data toHeikinAshi
+F06,chart,Hollow candles / Renko / Kagi / baseline,Additional chart types,out,not-planned,v2 candidates
+F07,chart,Timeframes 1m to 1M,Quick bar + grouped menu,must,done,13 timeframes; exchanges lacking a size are aggregated client-side
+F08,chart,Zoom / pan / kinetic scroll,Mouse wheel pinch drag,must,done,Lightweight Charts handlers; touch pinch and drag
+F09,chart,Crosshair with axis labels,Dashed crosshair with price/time labels,must,done,
+F10,chart,Legend with OHLC and change,Hovered bar values,must,done,Also indicator values per row
+F11,chart,Log scale,Toggle on price scale,must,done,
+F12,chart,Percent scale,Toggle on price scale,should,not-planned,
+F13,chart,Auto-scale and scroll to realtime,Button,should,partial,Auto-scale on; no explicit button
+F14,chart,Load more history on scroll,Infinite scroll back,must,done,Viewport-stable prepend
+F15,data,Live streaming updates open candle,Trade stream,must,done,Candle builder from trades; kline-free design
+F16,data,Reconnect with backoff and backfill,Transparent,must,done,Exponential backoff + jitter; stale detection; visibility/pageshow resume
+F17,data,Crypto exchanges,Binance Coinbase Kraken Bybit OKX,must,done,Direct client connections; Binance never relayed
+F18,data,US stocks,Real-time/delayed with source label,must,done,Alpaca IEX via Vercel SSE relay; polling fallback on free-plan limit
+F19,data,Gold and silver spot,XAUUSD XAGUSD,must,done,Twelve Data via relay (1-min polling) + tokenized gold streams
+F20,data,Market session state,Market closed / pre / post,must,done,Badge + session label for stocks and metals
+F21,data,Disconnected / stale indicator on chart,Status badge,must,done,
+F22,symbols,Symbol search with exchange prefixes,BINANCE:BTCUSDT NASDAQ:AAPL,must,done,Catalog + live provider search; METALS: prefix
+F23,symbols,Filter by asset class,Tabs,must,done,All / Crypto / Stocks / Metals
+F24,watchlist,Live price change and %,Rows,must,done,Shared quote hub; 60 s prevClose refresh + ticks
+F25,watchlist,Multiple lists,Create rename delete,should,done,
+F26,watchlist,Sections and flags,Organise,could,not-planned,
+F27,indicators,SMA EMA VWAP BB RSI MACD Volume,Built-ins,must,done,Own math with unit tests
+F28,indicators,Indicator settings (length color),Dialog,must,done,In IndicatorsSheet; hide/remove in legend
+F29,indicators,Pine Script,Custom scripts,out,not-planned,
+F30,drawings,Trend line ray horizontal rectangle fib text,Tools,must,done,Canvas overlay; mouse touch pen
+F31,drawings,Select move handles delete,Editing,must,done,Tap selects; drag moves; handle drag resizes; Delete key or toolbar
+F32,drawings,Persist with layout,Saved,must,done,Stored per chart in layout
+F33,drawings,Magnet mode and measure tool,Helpers,could,not-planned,
+F34,layouts,1 2 4 chart grids,Desktop/iPad,must,done,Phone shows one chart with a switch strip
+F35,layouts,Save load rename delete layouts,Named,must,done,
+F36,layouts,Sync symbol/interval across charts,Toggles,could,not-planned,
+F37,alerts,Create alert from chart and panel,Dialog,must,done,Prefilled with last price
+F38,alerts,Conditions crossing up down greater less,Options,must,done,
+F39,alerts,Once / every time,Frequency,must,done,Every-time debounced 1/min
+F40,alerts,System notification macOS,Notification Center,must,done,Tauri plugin; compile pending on a Mac
+F41,alerts,In-app alerts iPhone iPad,Popup + sound,must,done,Toast + Web Notification via SW + chime
+F42,alerts,Alerts while app closed,Server-side,out,planned-v2,Needs always-on evaluator + web push
+F43,sync,Layouts watchlists alerts settings synced,Account,must,done,Supabase RLS; local-first; realtime
+F44,sync,Magic-link sign-in,Email,must,done,
+F45,themes,Dark and light,Toggle,must,done,WCAG AA tokens both themes
+F46,platform,Installable PWA,Manifest SW icons splash,must,done,apple-touch-icon; safe areas; standalone
+F47,platform,Mac native app,Tauri,must,done-unverified,Rust manifest resolves; needs a Mac to compile
+F48,platform,Keyboard shortcuts,/ for search tool keys,should,done,
+F49,social,Ideas news screeners broker trading options replay,Other product areas,out,not-planned,

@@ -73,7 +73,7 @@ export function ChartPanel({ chart, active, compact, theme, onActivate }: { char
             <button key={tf} className={`btn ghost sm${chart.timeframe === tf ? ' active' : ''}`} data-testid={`tf-${tf}`} onClick={() => store.setTimeframe(tf, chart.id)}>{tf}</button>
           ))}
           <div className="menu-anchor">
-            <button className={`btn ghost sm${!QUICK_TIMEFRAMES.includes(chart.timeframe) ? ' active' : ''}`} data-testid="tf-more" onClick={(e) => { e.stopPropagation(); setTfMenu((v) => !v); setTypeMenu(false); }} aria-haspopup="menu" aria-expanded={tfMenu}>
+            <button className={`btn ghost sm${!QUICK_TIMEFRAMES.includes(chart.timeframe) ? ' active' : ''}`} data-testid="tf-more" aria-label="More timeframes" onClick={(e) => { e.stopPropagation(); setTfMenu((v) => !v); setTypeMenu(false); }} aria-haspopup="menu" aria-expanded={tfMenu}>
               {QUICK_TIMEFRAMES.includes(chart.timeframe) ? <IconChevronDown size={14} /> : chart.timeframe}
             </button>
             {tfMenu && (
