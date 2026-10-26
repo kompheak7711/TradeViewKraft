@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-ssr/
+build/
+.vercel/
+.env
+.env.local
+.env.*.local
+*.log
+coverage/
+playwright-report/
+test-results/
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
+.DS_Store
+*.tsbuildinfo

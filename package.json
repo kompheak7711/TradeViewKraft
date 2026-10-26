@@ -1,0 +1,21 @@
+{
+  "name": "tradingviewkraft",
+  "private": true,
+  "version": "0.1.0",
+  "description": "TradingViewKraft - clean-room charting app for crypto, US stocks and precious metals (web/PWA + macOS)",
+  "packageManager": "pnpm@10.28.0",
+  "scripts": {
+    "dev": "pnpm --filter @tvk/web dev",
+    "build": "pnpm -r --filter './packages/**' build && pnpm --filter @tvk/web build",
+    "build:web": "pnpm --filter @tvk/web build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r --filter './packages/**' test",
+    "test:e2e": "pnpm --filter @tvk/web test:e2e",
+    "lint": "pnpm -r lint",
+    "desktop:dev": "pnpm --filter @tvk/desktop tauri dev",
+    "desktop:build": "pnpm --filter @tvk/desktop tauri build"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
