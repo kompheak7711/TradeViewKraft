@@ -8,8 +8,8 @@ Stopped before entrepreneur / brand / launch / deploy (approval gate, brief §10
 | Capability | Web (desktop browser) | iPhone / iPad PWA | Mac app (Tauri) |
 | --- | --- | --- | --- |
 | Chart types (candles, bars, line, area, Heikin Ashi), 1m–1M, zoom/pan/crosshair, log scale | ✅ verified (e2e, mock data) | ✅ verified at 390×844 and 1024×768 (Chromium touch emulation; WebKit run pending on a Mac) | ✅ same build; compile pending on a Mac |
-| Live crypto (Binance, Coinbase, Kraken, Bybit, OKX) direct from the client | ✅ implemented; parsers unit-tested; live smoke test pending (sandbox blocked exchange hosts) | same | same, via native HTTP (no CORS) |
-| US stocks (Alpaca IEX) via relay: history, snapshots, search, SSE stream + polling fallback | ✅ implemented; needs Vercel env keys | same | same, `VITE_RELAY_BASE` → Vercel URL |
+| Live crypto (Binance, Coinbase, Kraken, Bybit, OKX) direct from the client | ✅ verified live by the owner on macOS (all five exchanges "Live") | same | same, via native HTTP (no CORS) |
+| US stocks via relay (Finnhub + Twelve Data, or Alpaca): history, snapshots, search, SSE stream + polling fallback | ✅ implemented; needs `FINNHUB_API_KEY` + `TWELVEDATA_API_KEY` in Vercel | same | same, `VITE_RELAY_BASE` → Vercel URL |
 | Gold/silver spot (Twelve Data via relay) + tokenized gold streams | ✅ implemented; needs Vercel env key | same | same |
 | Symbol search with exchange prefixes, filters | ✅ verified | ✅ verified | ✅ |
 | Watchlist with live price / change / % | ✅ verified | ✅ verified (sheet) | ✅ |
@@ -31,9 +31,9 @@ Stopped before entrepreneur / brand / launch / deploy (approval gate, brief §10
 No S1/S2 code defects open. Environment-blocked verification items: B8 (live provider smoke test) and B9 (Tauri
 compile). Minor: B6 text tool uses `prompt()`, B7 legend overlap on compact 4-chart panels. See `replica/test-report.md`.
 
-## Vercel preview URL
-**Not deployed from this session** (no Vercel credentials available). Deployment is configured end-to-end:
-import the repo in Vercel with Root Directory `apps/web`, add the environment variables, and the branch gets a preview URL.
+## Vercel URL
+**https://tradeviewkraft-web.vercel.app** (production from the working branch). The full e2e suite passed against it
+from the owner's Mac: desktop 14/14 (Chromium), iPad 14/14 and iPhone 14/14 on real WebKit.
 `.github/workflows/ci.yml` runs typecheck, unit tests, contrast, build and the WebKit e2e suite on every push.
 
 ## Next steps (in order)

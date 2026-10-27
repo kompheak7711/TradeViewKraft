@@ -6,10 +6,10 @@
 | --- | --- | --- | --- | --- |
 | `GET /api/health` | Config check (`stocks`, `metals` booleans, region) | — | no-store | — |
 | `GET /api/proxy?url=` | Read-only CORS relay for Bybit, OKX, Kraken, Coinbase public market paths | allow-listed hosts | 5 s edge | 403 on any other host/path; Binance excluded (451) |
-| `GET /api/stocks/bars` | OHLCV bars (`1Min`…`1Month`), `end`/`start` paging | Alpaca `/v2/stocks/{s}/bars` (paginated, `feed=iex`, split-adjusted) | 10 s live / 300 s paged; 15 s memo | symbol/timeframe validation |
-| `GET /api/stocks/snapshot?symbols=` | Last trade + previous close for up to 50 symbols | Alpaca `/v2/stocks/snapshots` | 3 s edge, 3 s memo | polling fallback target |
-| `GET /api/stocks/search?q=` | Ticker/name search | Alpaca `/v2/assets` (10k rows memoized 1 h) | 1 h edge | — |
-| `GET /api/stocks/stream?symbols=` | **SSE** trades (`trade`, `status`, `end` events), ≤ 30 symbols | Alpaca WS `wss://stream.data.alpaca.markets/v2/iex` | none | 406 → `connection_limit`, 405 → `symbol_limit`, ends at 280 s before `maxDuration` 300 s |
+| `GET /api/stocks/bars` | OHLCV bars (`1Min`…`1Month`), `end`/`start` paging | Alpaca `/v2/stocks/{s}/bars` when Alpaca keys exist; otherwise Twelve Data `time_series` (aggregated for 3m/6h/12h) | 10 s live / 300 s paged (Alpaca); 50 s / 600 s (Twelve Data) | symbol/timeframe validation |
+| `GET /api/stocks/snapshot?symbols=` | Last trade + previous close for up to 50 symbols | Alpaca `/v2/stocks/snapshots`, or Finnhub `/quote` per symbol | 3 s edge (Alpaca); 5 s edge + 10 s memo (Finnhub) | polling fallback target |
+| `GET /api/stocks/search?q=` | Ticker/name search | Alpaca `/v2/assets` (memoized 1 h), or Finnhub `/search?exchange=US` | 1 h edge | — |
+| `GET /api/stocks/stream?symbols=` | **SSE** trades (`trade`, `status`, `end` events), ≤ 30 (Alpaca) / 50 (Finnhub) symbols | Alpaca WS `wss://stream.data.alpaca.markets/v2/iex`, or Finnhub WS `wss://ws.finnhub.io` | none | 406 → `connection_limit`, 405 → `symbol_limit`, ends at 280 s before `maxDuration` 300 s |
 | `GET /api/metals/quote?symbols=` | XAU/USD, XAG/USD spot + previous close | Twelve Data `/quote` | 55 s edge + memo | 429 → `rate_limited` |
 | `GET /api/metals/bars?symbol=&timeframe=` | Spot OHLC (aggregated for 3m/6h/12h) | Twelve Data `/time_series` | 50 s live / 600 s paged + memo | 429 → `rate_limited` |
 
@@ -31,7 +31,7 @@ chart shows no gap. iOS Safari suspends `EventSource` in the background; `visibi
 - Free-plan caveat: projects pause after 7 days without activity; the app keeps working locally and re-syncs on restore.
 
 ## Environment variables
-See `apps/web/.env.example`. Server-side: `ALPACA_KEY_ID`, `ALPACA_SECRET_KEY`, `ALPACA_FEED`, `TWELVEDATA_API_KEY`,
+See `apps/web/.env.example`. Server-side: `FINNHUB_API_KEY`, `TWELVEDATA_API_KEY`, optional `ALPACA_KEY_ID`, `ALPACA_SECRET_KEY`, `ALPACA_FEED`,
 `RELAY_ALLOWED_ORIGINS`. Client-safe: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_RELAY_BASE`, `VITE_DATA_MODE`.
 
 ## Deployment configuration

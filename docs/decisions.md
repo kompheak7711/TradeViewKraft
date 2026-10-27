@@ -122,3 +122,15 @@ status report.
 | Twelve Data free | 8 credits/min, 800 credits/day, no WebSocket | 60 s client poll + 55 s edge cache; bars memoized 50 s; history pages cached 10 min |
 | Binance public | 6 000 request weight/min per IP, WS 5 msgs/s client→server | 1 shared socket per exchange; history pages of 500–1000 |
 | Coinbase/Kraken/Bybit/OKX public | 10–20 req/s per IP, WS ping requirements | token-bucket helper, per-exchange ping payloads, single shared socket |
+
+## D-014 · Stocks without Alpaca: Finnhub + Twelve Data fallback
+**Context.** Alpaca sign-up requires US tax residency, which the owner does not have. Live verification on the
+owner's Mac confirmed all five crypto exchanges stream (D-002 resolved) and the Vercel deployment serves the app.
+**Decision.** The stock relay now auto-selects its upstream: Alpaca when `ALPACA_KEY_ID`/`ALPACA_SECRET_KEY` exist,
+otherwise **Finnhub** (free plan, any country: real-time US trades over WebSocket with 50 symbols, `/quote` for
+watchlist snapshots, `/search`) for live data and **Twelve Data** `time_series` (free plan covers US stocks) for
+history. `/api/health` reports `stocksProvider` and the client shows the source in the chart legend.
+**Consequences.** Same SSE relay pattern and client code. Twelve Data credits are shared between metals and stock
+history (800/day): history pages are cached 50 s live / 10 min for paged requests at the edge, so a day of normal use
+stays well under quota. Finnhub `/quote` costs 1 call per symbol (60/min), memoized 10 s. Finnhub trade data for US
+stocks is real-time on the free plan; volume is per-trade size, not consolidated.

@@ -17,7 +17,7 @@ market-data plans (public exchange streams, Alpaca free, Twelve Data free). No a
 | --- | --- |
 | Chart | Candles, bars, line, area, Heikin Ashi · 1m–1M timeframes · zoom/pan/crosshair · price & time scales · log scale |
 | Live data | Streaming prices update the open candle in real time; reconnect with backoff, resubscribe and backfill gaps |
-| Assets | Crypto (Binance, Coinbase, Kraken, Bybit, OKX), US stocks (Alpaca/IEX), gold & silver spot (Twelve Data) plus tokenized gold (PAXG/XAUT) |
+| Assets | Crypto (Binance, Coinbase, Kraken, Bybit, OKX), US stocks (Finnhub + Twelve Data, or Alpaca/IEX if you have US keys), gold & silver spot (Twelve Data) plus tokenized gold (PAXG/XAUT) |
 | Symbols | `EXCHANGE:SYMBOL` everywhere: `BINANCE:BTCUSDT`, `NASDAQ:AAPL`, `METALS:XAUUSD`; search with filters and exchange prefixes |
 | Watchlist | Live price, change and % change; multiple lists |
 | Indicators | SMA, EMA, VWAP, Bollinger Bands, RSI, MACD, Volume (own implementation, unit-tested) |
@@ -94,8 +94,9 @@ See `apps/desktop/README.md` for prerequisites and why Tauri (not Electron).
 1. Import the GitHub repo in Vercel. **Root Directory: `apps/web`** (the `vercel.json` there configures the
    pnpm workspace install, the Vite build and the Functions' max duration). Framework preset: Vite.
 2. Environment variables (Project → Settings → Environment Variables):
-   `ALPACA_KEY_ID`, `ALPACA_SECRET_KEY`, `ALPACA_FEED=iex`, `TWELVEDATA_API_KEY`,
-   `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`. Leave `VITE_RELAY_BASE` empty (same origin).
+   `FINNHUB_API_KEY`, `TWELVEDATA_API_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+   (optionally `ALPACA_KEY_ID`, `ALPACA_SECRET_KEY`, `ALPACA_FEED=iex` to use Alpaca instead of Finnhub).
+   Leave `VITE_RELAY_BASE` empty (same origin).
 3. Production deploys from `main`; every other branch gets a preview URL.
 4. Check `https://<your-app>.vercel.app/api/health` → `{ ok: true, stocks: true, metals: true }`.
 

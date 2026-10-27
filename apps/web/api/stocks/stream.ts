@@ -7,6 +7,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import WebSocket from 'ws';
 import { cors, param } from '../_lib/http.js';
 import { ALPACA_STREAM, alpacaKeys } from '../_lib/alpaca.js';
+import { FINNHUB_WS, finnhubKey } from '../_lib/finnhub.js';
 
 export const config = { maxDuration: 300 };
 
@@ -26,8 +27,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
   };
   const keys = alpacaKeys();
-  if (!keys) {
-    send('status', { code: 'no_key', message: 'Stock relay is not configured (ALPACA_KEY_ID / ALPACA_SECRET_KEY missing)' });
+  const fh = finnhubKey();
+  if (!keys && !fh) {
+    send('status', { code: 'no_key', message: 'Stock relay is not configured (set FINNHUB_API_KEY or ALPACA_KEY_ID / ALPACA_SECRET_KEY)' });
     res.end();
     return;
   }
@@ -36,12 +38,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.end();
     return;
   }
-  if (symbols.length > MAX_SYMBOLS) {
-    send('status', { code: 'symbol_limit', message: `Alpaca free plan allows ${MAX_SYMBOLS} symbols per stream; streaming the first ${MAX_SYMBOLS}` });
-    symbols.length = MAX_SYMBOLS;
+  const maxSymbols = keys ? MAX_SYMBOLS : 50; // Finnhub free: 50 symbols per connection
+  if (symbols.length > maxSymbols) {
+    send('status', { code: 'symbol_limit', message: `Free plan allows ${maxSymbols} symbols per stream; streaming the first ${maxSymbols}` });
+    symbols.length = maxSymbols;
   }
 
-  const ws = new WebSocket(`${ALPACA_STREAM}/${keys.feed}`);
+  const ws = keys ? new WebSocket(`${ALPACA_STREAM}/${keys.feed}`) : new WebSocket(`${FINNHUB_WS}?token=${fh}`);
   let closed = false;
   const finish = (reason: string) => {
     if (closed) return;
@@ -55,6 +58,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const heartbeat = setInterval(() => res.write(': ping\n\n'), 15000);
   const lifetime = setTimeout(() => finish('max_duration'), LIFETIME_MS);
   req.on('close', () => finish('client_closed'));
+
+  if (!keys) {
+    // ---- Finnhub: subscribe per symbol; trades arrive as {type:'trade', data:[{s,p,v,t}]}; server pings every ~30 s.
+    ws.on('open', () => {
+      for (const s of symbols) ws.send(JSON.stringify({ type: 'subscribe', symbol: s }));
+      send('status', { code: 'subscribed', message: `Streaming ${symbols.length} symbols from Finnhub` });
+    });
+    ws.on('message', (raw) => {
+      let m: { type: string; msg?: string; data?: Array<{ s: string; p: number; v: number; t: number }> };
+      try {
+        m = JSON.parse(raw.toString());
+      } catch {
+        return;
+      }
+      if (m.type === 'trade' && Array.isArray(m.data)) {
+        for (const t of m.data) send('trade', { S: t.s, p: t.p, s: t.v ?? 0, t: t.t });
+      } else if (m.type === 'error') {
+        const limit = /limit|too many|429/i.test(m.msg ?? '');
+        send('status', { code: limit ? 'connection_limit' : 'error', message: m.msg ?? 'Finnhub stream error' });
+        if (limit) finish('connection_limit');
+      }
+    });
+    ws.on('close', () => finish('upstream_closed'));
+    ws.on('error', (e) => {
+      send('status', { code: 'error', message: e.message });
+      finish('upstream_error');
+    });
+    return;
+  }
 
   ws.on('open', () => ws.send(JSON.stringify({ action: 'auth', key: keys.key, secret: keys.secret })));
   ws.on('message', (raw) => {

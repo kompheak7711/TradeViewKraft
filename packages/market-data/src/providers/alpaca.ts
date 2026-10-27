@@ -71,16 +71,27 @@ export class AlpacaProvider implements MarketDataProvider {
     }
   }
 
+  private providerNote: Promise<string> | null = null;
+
+  /** The relay reports which upstream it uses (Alpaca/IEX or Finnhub + Twelve Data); shown in the chart legend. */
+  private dataNote(): Promise<string> {
+    this.providerNote ??= getJson<{ stocks: boolean; stocksProvider?: string | null }>(`${this.base}/api/health`)
+      .then((h) => (!h.stocks ? 'Stock relay not configured' : h.stocksProvider === 'finnhub' ? 'Finnhub trades, real-time · history via Twelve Data' : 'IEX via Alpaca, real-time (IEX volume only)'))
+      .catch(() => 'US stocks via relay');
+    return this.providerNote;
+  }
+
   async resolveSymbol(symbol: SymbolId): Promise<SymbolInfo | null> {
     const ticker = tickerOf(symbol);
+    const note = await this.dataNote();
     const local = POPULAR_SYMBOLS.find((s) => s.assetClass === 'stock' && s.ticker === ticker);
-    if (local) return local;
+    if (local) return { ...local, dataNote: note };
     try {
       const r = await getJson<{ results: Array<{ symbol: string; name: string; exchange: string }> }>(`${this.base}/api/stocks/search?q=${encodeURIComponent(ticker)}&limit=5`);
       const hit = r.results.find((a) => a.symbol === ticker);
-      return hit ? stockInfo(normalizeExchange(hit.exchange), hit.symbol, hit.name) : stockInfo('NASDAQ', ticker, ticker);
+      return { ...(hit ? stockInfo(normalizeExchange(hit.exchange), hit.symbol, hit.name) : stockInfo('NASDAQ', ticker, ticker)), dataNote: note };
     } catch {
-      return stockInfo('NASDAQ', ticker, ticker);
+      return { ...stockInfo('NASDAQ', ticker, ticker), dataNote: note };
     }
   }
 
@@ -217,7 +228,7 @@ export class AlpacaProvider implements MarketDataProvider {
       const symbol = this.symbolsByTicker.get(msg.S);
       const set = this.listeners.get(msg.S);
       if (!symbol || !set) return;
-      const tick: Tick = { symbol, time: msg.t, price: msg.p, size: msg.s, source: 'IEX' };
+      const tick: Tick = { symbol, time: msg.t, price: msg.p, size: msg.s, source: 'relay' };
       this.state.lastTickAt = tick.time;
       if (this.state.status !== 'live') this.setState({ ...this.state, status: 'live', message: undefined });
       for (const l of set) l(tick);

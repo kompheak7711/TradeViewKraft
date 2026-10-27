@@ -7,7 +7,8 @@ export default function handler(req: VercelRequest, res: VercelResponse): void {
   res.status(200).json({
     ok: true,
     time: new Date().toISOString(),
-    stocks: Boolean(process.env.ALPACA_KEY_ID && process.env.ALPACA_SECRET_KEY),
+    stocks: Boolean((process.env.ALPACA_KEY_ID && process.env.ALPACA_SECRET_KEY) || (process.env.FINNHUB_API_KEY && process.env.TWELVEDATA_API_KEY)),
+    stocksProvider: process.env.ALPACA_KEY_ID && process.env.ALPACA_SECRET_KEY ? 'alpaca' : process.env.FINNHUB_API_KEY && process.env.TWELVEDATA_API_KEY ? 'finnhub' : null,
     metals: Boolean(process.env.TWELVEDATA_API_KEY),
     region: process.env.VERCEL_REGION ?? 'local',
   });

@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { cacheFor, cors, handleError, memoize, param } from '../_lib/http.js';
-import { listAssets } from '../_lib/alpaca.js';
+import { alpacaKeys, listAssets } from '../_lib/alpaca.js';
+import { search as finnhubSearch } from '../_lib/finnhub.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   if (cors(req, res)) return;
@@ -11,6 +12,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
   try {
+    if (!alpacaKeys()) {
+      const hits = await memoize(`fhs:${q}`, 3600_000, () => finnhubSearch(q));
+      cacheFor(res, 3600, 86400);
+      res.status(200).json({
+        results: hits
+          .filter((h) => (h.type === 'Common Stock' || h.type === 'ETP' || h.type === 'ETF' || h.type === 'ADR') && !/[.:]/.test(h.symbol))
+          .slice(0, limit)
+          .map((h) => ({ symbol: h.symbol, name: h.description, exchange: 'NASDAQ' })),
+      });
+      return;
+    }
     // The asset list (~10k rows) is cached per warm instance for an hour.
     const assets = await memoize('assets', 3600_000, listAssets);
     const results = assets
