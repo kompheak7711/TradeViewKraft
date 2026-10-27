@@ -5,8 +5,8 @@
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import WebSocket from 'ws';
-import { cors, param } from '../_lib/http';
-import { ALPACA_STREAM, alpacaKeys } from '../_lib/alpaca';
+import { cors, param } from '../_lib/http.js';
+import { ALPACA_STREAM, alpacaKeys } from '../_lib/alpaca.js';
 
 export const config = { maxDuration: 300 };
 

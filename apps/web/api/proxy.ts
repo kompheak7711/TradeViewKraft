@@ -4,7 +4,7 @@
  * traffic always goes direct from the client (browser or Tauri).
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { cacheFor, cors, handleError, param, sendError } from './_lib/http';
+import { cacheFor, cors, handleError, param, sendError } from './_lib/http.js';
 
 const ALLOWED_HOSTS = new Set(['api.bybit.com', 'www.okx.com', 'api.kraken.com', 'api.exchange.coinbase.com']);
 const ALLOWED_PATH = /^\/(v5\/market\/|api\/v5\/(market|public)\/|0\/public\/|products\/?)/;

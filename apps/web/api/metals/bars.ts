@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { cacheFor, cors, handleError, memoize, param, sendError } from '../_lib/http';
-import { timeSeries, toTwelveSymbol } from '../_lib/twelvedata';
+import { cacheFor, cors, handleError, memoize, param, sendError } from '../_lib/http.js';
+import { timeSeries, toTwelveSymbol } from '../_lib/twelvedata.js';
 
 const INTERVALS: Record<string, { td: string; seconds: number }> = {
   '1m': { td: '1min', seconds: 60 }, '3m': { td: '1min', seconds: 180 }, '5m': { td: '5min', seconds: 300 }, '15m': { td: '15min', seconds: 900 }, '30m': { td: '30min', seconds: 1800 },

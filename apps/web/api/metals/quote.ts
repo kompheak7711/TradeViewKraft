@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { cacheFor, cors, handleError, memoize, param, sendError } from '../_lib/http';
-import { quote, toTwelveSymbol } from '../_lib/twelvedata';
+import { cacheFor, cors, handleError, memoize, param, sendError } from '../_lib/http.js';
+import { quote, toTwelveSymbol } from '../_lib/twelvedata.js';
 
 /** Spot quotes for gold/silver. Cached 55 s at the edge: 2 symbols × 60 req/h × 24 h ≈ 1440 credits/day worst case,
  *  but one /quote call with both symbols costs 1 credit per symbol, so the typical budget is ~1 call/min = well under 800/day

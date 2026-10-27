@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { cacheFor, cors, handleError, memoize, param, sendError } from '../_lib/http';
-import { getSnapshots } from '../_lib/alpaca';
+import { cacheFor, cors, handleError, memoize, param, sendError } from '../_lib/http.js';
+import { getSnapshots } from '../_lib/alpaca.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   if (cors(req, res)) return;

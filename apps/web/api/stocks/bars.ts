@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { cacheFor, cors, handleError, memoize, param, sendError } from '../_lib/http';
-import { getBars } from '../_lib/alpaca';
+import { cacheFor, cors, handleError, memoize, param, sendError } from '../_lib/http.js';
+import { getBars } from '../_lib/alpaca.js';
 
 const TIMEFRAMES = new Set(['1Min', '3Min', '5Min', '15Min', '30Min', '1Hour', '2Hour', '4Hour', '6Hour', '12Hour', '1Day', '1Week', '1Month']);
 
