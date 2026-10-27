@@ -35,6 +35,10 @@ create index if not exists layouts_user_idx on public.layouts (user_id);
 create index if not exists watchlists_user_idx on public.watchlists (user_id);
 create index if not exists alerts_user_idx on public.alerts (user_id);
 
+-- Data API access for signed-in users (explicit, so the project setting "automatically expose new tables" does not matter).
+grant usage on schema public to authenticated;
+grant select, insert, update, delete on public.layouts, public.watchlists, public.alerts, public.settings to authenticated;
+
 -- Row-level security: a user can only see and change their own rows.
 alter table public.layouts enable row level security;
 alter table public.watchlists enable row level security;
