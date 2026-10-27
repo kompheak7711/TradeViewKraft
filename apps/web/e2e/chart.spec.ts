@@ -92,10 +92,13 @@ test.describe('chart basics', () => {
     await openApp(page);
     const area = page.locator('.chart-area').first();
     const box = (await area.boundingBox())!;
-    // Zoom out then drag right several times to reach the left edge.
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-    for (let i = 0; i < 6; i++) await page.mouse.wheel(0, 400);
-    for (let i = 0; i < 4; i++) await dragOnChart(page, [0.2, 0.5], [0.9, 0.5]);
+    // Zoom out (mouse projects only: mobile WebKit has no wheel events) then drag right to reach the left edge.
+    const touch = Boolean(test.info().project.use.hasTouch);
+    if (!touch) {
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      for (let i = 0; i < 6; i++) await page.mouse.wheel(0, 400);
+    }
+    for (let i = 0; i < (touch ? 8 : 4); i++) await dragOnChart(page, [0.2, 0.5], [0.9, 0.5]);
     await expect(page.getByTestId('chart-error')).toHaveCount(0);
     await expect(page.locator('.chart-view canvas').first()).toBeVisible();
   });
